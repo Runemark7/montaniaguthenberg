@@ -2,15 +2,20 @@
 
 import { pages, types, themes, taxonomies, categories, users } from './fake-data.js';
 import { mediaList, createMedia } from './fake-media.js';
-
+import axios from 'axios';
 
 export function getPage (type = 'page') {
-  return JSON.parse(localStorage.getItem('g-editor-page')) || pages[type];
+ return JSON.parse(localStorage.getItem('g-editor-page')) || pages[type];
 }
 
-function savePage (data, type = 'page') {
+async function testData(){
+  const data = await axios.get('http://localhost:5000/api/products');
+  return data;
+}
+
+function savePage (data) {
   const item = {
-    ...getPage(type),
+    ...testData(),
     ...data,
     content: {
       raw: data.content,
@@ -18,6 +23,10 @@ function savePage (data, type = 'page') {
     },
   };
   localStorage.setItem('g-editor-page', JSON.stringify(item));
+  console.log("inside svaePage");
+  axios.post('http://localhost:5000/api/products', item);
+  const test = testData();
+  console.log(test);
 }
 
 function route (pattern, pathname) {
