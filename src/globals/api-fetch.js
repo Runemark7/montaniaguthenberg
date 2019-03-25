@@ -1,8 +1,9 @@
 /* eslint no-cond-assign: off */
 
 import { pages, types, themes, taxonomies, categories, users } from './fake-data.js';
-import { mediaList, createMedia } from './fake-media.js';
+import { mediaList, createMedia, dataFromDb } from './fake-media.js';
 import axios from 'axios';
+
 
 export function getPage (type = 'page') {
  return JSON.parse(localStorage.getItem('g-editor-page')) || pages[type];
@@ -52,7 +53,6 @@ function route (pattern, pathname) {
 
 const apiFetch = async options => {
   // console.log(options.path, options);
-
   let res = {}, rt;
   const { method, path, data } = options;
   const [ _path ] = path.split('?');
@@ -89,6 +89,7 @@ const apiFetch = async options => {
 
   // Media
   else if(route('/wp/v2/media', _path)) {
+    await dataFromDb();
     if(method === 'OPTIONS') {
       res = {
         headers: {
